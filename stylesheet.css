@@ -1,0 +1,8 @@
+.rectangle-preview {
+    background-color: rgba(52, 152, 219, 0.3);
+    border: 1px solid rgba(52, 152, 219, 0.8);
+}
+
+.system-status-icon {
+    padding: 0 4px;
+}

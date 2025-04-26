@@ -1,0 +1,23 @@
+# Compiled schemas
+schemas/gschemas.compiled
+
+# Backup files
+*~
+*.bak
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Node.js (if you use it for development)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*

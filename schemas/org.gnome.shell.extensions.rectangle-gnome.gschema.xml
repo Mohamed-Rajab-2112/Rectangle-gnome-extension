@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.rectangle-gnome" path="/org/gnome/shell/extensions/rectangle-gnome/">
+    <!-- Keyboard shortcuts -->
+    <key name="rectangle-left-half" type="as">
+      <default><![CDATA[['<Super>Left']]]></default>
+      <summary>Move window to left half</summary>
+    </key>
+    <key name="rectangle-right-half" type="as">
+      <default><![CDATA[['<Super>Right']]]></default>
+      <summary>Move window to right half</summary>
+    </key>
+    <key name="rectangle-top-half" type="as">
+      <default><![CDATA[['<Super>Up']]]></default>
+      <summary>Move window to top half</summary>
+    </key>
+    <key name="rectangle-bottom-half" type="as">
+      <default><![CDATA[['<Super>Down']]]></default>
+      <summary>Move window to bottom half</summary>
+    </key>
+    <key name="rectangle-top-left" type="as">
+      <default><![CDATA[['<Super><Shift>Left']]]></default>
+      <summary>Move window to top-left quarter</summary>
+    </key>
+    <key name="rectangle-top-right" type="as">
+      <default><![CDATA[['<Super><Shift>Right']]]></default>
+      <summary>Move window to top-right quarter</summary>
+    </key>
+    <key name="rectangle-bottom-left" type="as">
+      <default><![CDATA[['<Super><Shift>Down']]]></default>
+      <summary>Move window to bottom-left quarter</summary>
+    </key>
+    <key name="rectangle-bottom-right" type="as">
+      <default><![CDATA[['<Super><Shift>Up']]]></default>
+      <summary>Move window to bottom-right quarter</summary>
+    </key>
+    <key name="rectangle-left-third" type="as">
+      <default><![CDATA[['<Super><Alt>Left']]]></default>
+      <summary>Move window to left third</summary>
+    </key>
+    <key name="rectangle-center-third" type="as">
+      <default><![CDATA[['<Super><Alt>Up']]]></default>
+      <summary>Move window to center third</summary>
+    </key>
+    <key name="rectangle-right-third" type="as">
+      <default><![CDATA[['<Super><Alt>Right']]]></default>
+      <summary>Move window to right third</summary>
+    </key>
+    <key name="rectangle-left-two-thirds" type="as">
+      <default><![CDATA[['<Super><Alt><Shift>Left']]]></default>
+      <summary>Move window to left two-thirds</summary>
+    </key>
+    <key name="rectangle-right-two-thirds" type="as">
+      <default><![CDATA[['<Super><Alt><Shift>Right']]]></default>
+      <summary>Move window to right two-thirds</summary>
+    </key>
+    <key name="rectangle-maximize" type="as">
+      <default><![CDATA[['<Super>m']]]></default>
+      <summary>Maximize window</summary>
+    </key>
+    <key name="rectangle-center" type="as">
+      <default><![CDATA[['<Super>c']]]></default>
+      <summary>Center window</summary>
+    </key>
+    
+    <!-- Snap area settings -->
+    <key name="snap-area-size" type="i">
+      <default>20</default>
+      <summary>Size of snap areas in pixels</summary>
+    </key>
+    
+    <key name="snap-top-left-corner-action" type="s">
+      <default>'top-left'</default>
+      <summary>Action for top-left corner snap</summary>
+    </key>
+    
+    <key name="snap-top-right-corner-action" type="s">
+      <default>'top-right'</default>
+      <summary>Action for top-right corner snap</summary>
+    </key>
+    
+    <key name="snap-bottom-left-corner-action" type="s">
+      <default>'bottom-left'</default>
+      <summary>Action for bottom-left corner snap</summary>
+    </key>
+    
+    <key name="snap-bottom-right-corner-action" type="s">
+      <default>'bottom-right'</default>
+      <summary>Action for bottom-right corner snap</summary>
+    </key>
+    
+    <key name="snap-top-edge-action" type="s">
+      <default>'top-half'</default>
+      <summary>Action for top edge snap</summary>
+    </key>
+    
+    <key name="snap-bottom-edge-action" type="s">
+      <default>'bottom-half'</default>
+      <summary>Action for bottom edge snap</summary>
+    </key>
+    
+    <key name="snap-left-edge-action" type="s">
+      <default>'left-half'</default>
+      <summary>Action for left edge snap</summary>
+    </key>
+    
+    <key name="snap-right-edge-action" type="s">
+      <default>'right-half'</default>
+      <summary>Action for right edge snap</summary>
+    </key>
+  </schema>
+</schemalist>
