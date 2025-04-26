@@ -3,7 +3,7 @@
   "description": "Window management extension similar to Rectangle for macOS. Provides keyboard shortcuts and snap areas for window positioning.",
   "uuid": "rectangle-gnome@mohamed.github.io",
   "shell-version": ["40", "41", "42", "43", "44"],
-  "url": "https://github.com/Mohamed-Rajab-2112/rectangle-gnome",
+  "url": "https://github.com/Mohamed-Rajab-2112/Rectangle-gnome-extension",
   "version": 1,
   "settings-schema": "org.gnome.shell.extensions.rectangle-gnome"
 }

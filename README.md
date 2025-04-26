@@ -46,7 +46,7 @@ A GNOME Shell extension that provides window management functionality similar to
 
 ### Manual Installation
 
-1. Download the latest release from the [GitHub repository](https://github.com/Mohamed-Rajab-2112/rectangle-gnome/releases)
+1. Download the latest release from the [GitHub repository](https://github.com/Mohamed-Rajab-2112/Rectangle-gnome-extension/releases)
 2. Extract the zip file to `~/.local/share/gnome-shell/extensions/rectangle-gnome@mohamed.github.io`
 3. Restart GNOME Shell:
    - Press `Alt+F2`, type `r`, and press Enter (on X11)
