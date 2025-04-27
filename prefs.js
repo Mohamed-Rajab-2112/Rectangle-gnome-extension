@@ -77,6 +77,64 @@ function fillPreferencesWindow(window) {
     addSnapAreaActionRow(snapAreasGroup, settings, 'snap-bottom-edge-action', 'Bottom Edge');
     addSnapAreaActionRow(snapAreasGroup, settings, 'snap-left-edge-action', 'Left Edge');
     addSnapAreaActionRow(snapAreasGroup, settings, 'snap-right-edge-action', 'Right Edge');
+    
+    // Create a window layout persistence group
+    const layoutGroup = new Adw.PreferencesGroup({
+        title: 'Window Layout Persistence',
+        description: 'Save and restore window positions across restarts'
+    });
+    page.add(layoutGroup);
+    
+    // Add toggle for saving window positions
+    const savePositionsRow = new Adw.ActionRow({ 
+        title: 'Save Window Positions',
+        subtitle: 'Remember window positions and restore them after restart'
+    });
+    const savePositionsSwitch = new Gtk.Switch({
+        active: settings.get_boolean('save-window-positions'),
+        valign: Gtk.Align.CENTER,
+        halign: Gtk.Align.END
+    });
+    savePositionsSwitch.connect('notify::active', () => {
+        settings.set_boolean('save-window-positions', savePositionsSwitch.get_active());
+    });
+    savePositionsRow.add_suffix(savePositionsSwitch);
+    savePositionsRow.activatable_widget = savePositionsSwitch;
+    layoutGroup.add(savePositionsRow);
+    
+    // Add max layout age setting
+    const maxAgeRow = new Adw.ActionRow({ 
+        title: 'Maximum Layout Age (days)',
+        subtitle: 'Window layouts older than this will be removed'
+    });
+    const maxAgeAdjustment = new Gtk.Adjustment({
+        lower: 1,
+        upper: 365,
+        step_increment: 1,
+        page_increment: 7,
+        value: Math.floor(settings.get_int('max-layout-age') / 86400) // Convert seconds to days
+    });
+    const maxAgeSpinButton = new Gtk.SpinButton({
+        adjustment: maxAgeAdjustment,
+        climb_rate: 1,
+        digits: 0,
+        valign: Gtk.Align.CENTER,
+        halign: Gtk.Align.END
+    });
+    maxAgeSpinButton.connect('value-changed', () => {
+        // Convert days to seconds
+        settings.set_int('max-layout-age', maxAgeSpinButton.get_value() * 86400);
+    });
+    maxAgeRow.add_suffix(maxAgeSpinButton);
+    layoutGroup.add(maxAgeRow);
+    
+    // Only show max age setting when save positions is enabled
+    const updateMaxAgeVisibility = () => {
+        maxAgeRow.sensitive = savePositionsSwitch.get_active();
+    };
+    
+    savePositionsSwitch.connect('notify::active', updateMaxAgeVisibility);
+    updateMaxAgeVisibility();
 }
 
 function addShortcutRow(group, settings, name, title) {

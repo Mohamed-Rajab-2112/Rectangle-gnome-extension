@@ -108,5 +108,21 @@
       <default>'right-half'</default>
       <summary>Action for right edge snap</summary>
     </key>
+    
+    <!-- Window layout persistence -->
+    <key name="save-window-positions" type="b">
+      <default>true</default>
+      <summary>Save window positions across restarts</summary>
+    </key>
+    
+    <key name="window-layouts" type="s">
+      <default>'{}'</default>
+      <summary>Saved window layouts in JSON format</summary>
+    </key>
+    
+    <key name="max-layout-age" type="i">
+      <default>604800</default>
+      <summary>Maximum age of saved window layouts in seconds (default: 1 week)</summary>
+    </key>
   </schema>
 </schemalist>
