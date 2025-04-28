@@ -142,7 +142,7 @@ class RectangleIndicator extends PanelMenu.Button {
         return item;
     }
 
-    _moveActiveWindow(position) {
+    _moveActiveWindow(position, isPortraitOverride) {
         let window = global.display.focus_window;
         if (!window) {
             log('No active window found');
@@ -155,133 +155,291 @@ class RectangleIndicator extends PanelMenu.Button {
         let monitor = window.get_monitor();
         let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor);
         
+        // Check if monitor is in portrait orientation
+        let isPortrait = isPortraitOverride !== undefined ? isPortraitOverride : false;
+        if (ExtensionUtils.getCurrentExtension().instance) {
+            isPortrait = ExtensionUtils.getCurrentExtension().instance._isPortraitOrientation(monitor);
+        }
+        
         let windowRect = new Meta.Rectangle();
 
         switch (position) {
             // Halves
             case POSITIONS.LEFT_HALF:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left half" becomes "top half"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_HALF:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 2);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right half" becomes "bottom half"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.TOP_HALF:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = workArea.width;
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top half" becomes "left half"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = workArea.height;
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_HALF:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = workArea.width;
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom half" becomes "right half"
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = workArea.height;
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Quarters
             case POSITIONS.TOP_LEFT:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top left" becomes "top left" but rotated
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_RIGHT:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 2);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top right" becomes "top right" but rotated
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_LEFT:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom left" becomes "bottom left" but rotated
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_RIGHT:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 2);
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = Math.floor(workArea.width / 2);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom right" becomes "bottom right" but rotated
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Thirds
             case POSITIONS.LEFT_THIRD:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left third" becomes "top third"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.CENTER_THIRD:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 3);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "center third" becomes "middle third" vertically
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_THIRD:
-                windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right third" becomes "bottom third"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = workArea.height;
+                }
                 break;
                 
             // Two-thirds
             case POSITIONS.LEFT_TWO_THIRDS:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width * 2 / 3);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left two thirds" becomes "top two thirds"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height * 2 / 3);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width * 2 / 3);
+                    windowRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_TWO_THIRDS:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 3);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width * 2 / 3);
-                windowRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right two thirds" becomes "bottom two thirds"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    windowRect.width = workArea.width;
+                    windowRect.height = Math.floor(workArea.height * 2 / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width * 2 / 3);
+                    windowRect.height = workArea.height;
+                }
                 break;
                 
             // Sixths (top row)
             case POSITIONS.TOP_LEFT_SIXTH:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top left sixth" becomes "top left sixth" rotated
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_CENTER_SIXTH:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 3);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top center sixth" becomes "middle left sixth"
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_RIGHT_SIXTH:
-                windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                windowRect.y = workArea.y;
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top right sixth" stays in top right
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    windowRect.y = workArea.y;
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Sixths (bottom row)
             case POSITIONS.BOTTOM_LEFT_SIXTH:
-                windowRect.x = workArea.x;
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom left sixth" stays in bottom left
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x;
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_CENTER_SIXTH:
-                windowRect.x = workArea.x + Math.floor(workArea.width / 3);
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom center sixth" becomes "middle right sixth"
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_RIGHT_SIXTH:
-                windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                windowRect.y = workArea.y + Math.floor(workArea.height / 2);
-                windowRect.width = Math.floor(workArea.width / 3);
-                windowRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom right sixth" becomes "bottom right sixth" rotated
+                    windowRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    windowRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    windowRect.width = Math.floor(workArea.width / 2);
+                    windowRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    windowRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    windowRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    windowRect.width = Math.floor(workArea.width / 3);
+                    windowRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Special positions
@@ -522,7 +680,7 @@ class Extension {
                     lastSeen: Date.now()
                 };
                 
-                log(`Saved layout for window: ${windowKey} at position (${rect.x},${rect.y}) with size ${rect.width}x${rect.height})`);
+                log(`Saved layout for window: ${windowKey} at position (${rect.x},${rect.y}) with size ${rect.width}x${rect.height}`);
                 windowCount++;
             }
             
@@ -925,7 +1083,12 @@ class Extension {
 
         let indicator = Main.panel.statusArea['rectangle-gnome'];
         if (indicator) {
-            indicator._moveActiveWindow(position);
+            // Check if the monitor is in portrait orientation
+            let monitor = window.get_monitor();
+            let isPortrait = this._isPortraitOrientation(monitor);
+            
+            // Pass portrait information to the indicator
+            indicator._moveActiveWindow(position, isPortrait);
         }
     }
     
@@ -995,7 +1158,49 @@ class Extension {
             log(`Applying snap action: ${this._currentSnapAction} for area ${this._currentSnapArea}`);
             let indicator = Main.panel.statusArea['rectangle-gnome'];
             if (indicator) {
-                indicator._moveActiveWindow(this._currentSnapAction);
+                // Check if the monitor is in portrait orientation
+                let monitor = window.get_monitor();
+                let isPortrait = this._isPortraitOrientation(monitor);
+                
+                // Special handling for corner snap areas in portrait mode
+                if (isPortrait) {
+                    // For top-right corner in portrait mode, we need special handling
+                    if (this._currentSnapArea === 'top-right-corner' && 
+                        this._currentSnapAction === POSITIONS.TOP_RIGHT) {
+                        // Force the action to be top-right
+                        indicator._moveActiveWindow(POSITIONS.TOP_RIGHT, isPortrait);
+                        this._hidePreview();
+                        this._draggedWindow = null;
+                        this._currentSnapArea = null;
+                        this._currentSnapAction = null;
+                        
+                        if (this._dragCheckTimeout) {
+                            GLib.source_remove(this._dragCheckTimeout);
+                            this._dragCheckTimeout = 0;
+                        }
+                        return;
+                    }
+                    
+                    // For bottom-left corner in portrait mode, we need special handling
+                    if (this._currentSnapArea === 'bottom-left-corner' && 
+                        this._currentSnapAction === POSITIONS.BOTTOM_LEFT) {
+                        // Force the action to be bottom-left
+                        indicator._moveActiveWindow(POSITIONS.BOTTOM_LEFT, isPortrait);
+                        this._hidePreview();
+                        this._draggedWindow = null;
+                        this._currentSnapArea = null;
+                        this._currentSnapAction = null;
+                        
+                        if (this._dragCheckTimeout) {
+                            GLib.source_remove(this._dragCheckTimeout);
+                            this._dragCheckTimeout = 0;
+                        }
+                        return;
+                    }
+                }
+                
+                // Pass portrait information to the indicator
+                indicator._moveActiveWindow(this._currentSnapAction, isPortrait);
             }
         } else {
             log('No snap area detected at drag end');
@@ -1021,6 +1226,9 @@ class Extension {
         let monitor = this._draggedWindow.get_monitor();
         let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor);
         
+        // Check if monitor is in portrait orientation
+        let isPortrait = this._isPortraitOrientation(monitor);
+        
         // Get cursor position
         let [x, y] = global.get_pointer();
         
@@ -1028,17 +1236,17 @@ class Extension {
         let snapAreaSize = this._settings.get_int('snap-area-size');
         
         // Check each snap area
-        this._checkSnapArea(x, y, workArea, 'top-left-corner');
-        this._checkSnapArea(x, y, workArea, 'top-right-corner');
-        this._checkSnapArea(x, y, workArea, 'bottom-left-corner');
-        this._checkSnapArea(x, y, workArea, 'bottom-right-corner');
-        this._checkSnapArea(x, y, workArea, 'top-edge');
-        this._checkSnapArea(x, y, workArea, 'bottom-edge');
-        this._checkSnapArea(x, y, workArea, 'left-edge');
-        this._checkSnapArea(x, y, workArea, 'right-edge');
+        this._checkSnapArea(x, y, workArea, 'top-left-corner', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'top-right-corner', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'bottom-left-corner', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'bottom-right-corner', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'top-edge', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'bottom-edge', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'left-edge', isPortrait);
+        this._checkSnapArea(x, y, workArea, 'right-edge', isPortrait);
     }
 
-    _checkSnapArea(x, y, workArea, areaName) {
+    _checkSnapArea(x, y, workArea, areaName, isPortrait) {
         let snapAreaSize = this._settings.get_int('snap-area-size');
         let inSnapArea = false;
         
@@ -1087,7 +1295,80 @@ class Extension {
             log(`Cursor in snap area: ${areaName}`);
             // Get the position action for this area from settings
             let positionAction = this._settings.get_string(`snap-${areaName}-action`);
-            log(`Action for ${areaName}: ${positionAction}`);
+            
+            // Adapt the position action for portrait mode if needed
+            if (isPortrait) {
+                switch (positionAction) {
+                    // Halves
+                    case POSITIONS.LEFT_HALF:
+                        positionAction = POSITIONS.TOP_HALF;
+                        break;
+                    case POSITIONS.RIGHT_HALF:
+                        positionAction = POSITIONS.BOTTOM_HALF;
+                        break;
+                    case POSITIONS.TOP_HALF:
+                        positionAction = POSITIONS.LEFT_HALF;
+                        break;
+                    case POSITIONS.BOTTOM_HALF:
+                        positionAction = POSITIONS.RIGHT_HALF;
+                        break;
+                    
+                    // Quarters
+                    case POSITIONS.TOP_LEFT:
+                        // Top left stays top left in portrait
+                        break;
+                    case POSITIONS.TOP_RIGHT:
+                        positionAction = POSITIONS.TOP_RIGHT;
+                        break;
+                    case POSITIONS.BOTTOM_LEFT:
+                        positionAction = POSITIONS.BOTTOM_LEFT;
+                        break;
+                    case POSITIONS.BOTTOM_RIGHT:
+                        // Bottom right stays bottom right in portrait
+                        break;
+                    
+                    // Thirds
+                    case POSITIONS.LEFT_THIRD:
+                        positionAction = POSITIONS.LEFT_THIRD; // Will be handled by the portrait logic in _moveActiveWindow
+                        break;
+                    case POSITIONS.CENTER_THIRD:
+                        positionAction = POSITIONS.CENTER_THIRD; // Will be handled by the portrait logic in _moveActiveWindow
+                        break;
+                    case POSITIONS.RIGHT_THIRD:
+                        positionAction = POSITIONS.RIGHT_THIRD; // Will be handled by the portrait logic in _moveActiveWindow
+                        break;
+                    
+                    // Two-thirds
+                    case POSITIONS.LEFT_TWO_THIRDS:
+                        positionAction = POSITIONS.LEFT_TWO_THIRDS; // Will be handled by the portrait logic in _moveActiveWindow
+                        break;
+                    case POSITIONS.RIGHT_TWO_THIRDS:
+                        positionAction = POSITIONS.RIGHT_TWO_THIRDS; // Will be handled by the portrait logic in _moveActiveWindow
+                        break;
+                    
+                    // Sixths
+                    case POSITIONS.TOP_LEFT_SIXTH:
+                        positionAction = POSITIONS.TOP_LEFT_SIXTH;
+                        break;
+                    case POSITIONS.TOP_CENTER_SIXTH:
+                        positionAction = POSITIONS.TOP_LEFT_SIXTH;
+                        break;
+                    case POSITIONS.TOP_RIGHT_SIXTH:
+                        positionAction = POSITIONS.TOP_RIGHT_SIXTH;
+                        break;
+                    case POSITIONS.BOTTOM_LEFT_SIXTH:
+                        positionAction = POSITIONS.BOTTOM_LEFT_SIXTH;
+                        break;
+                    case POSITIONS.BOTTOM_CENTER_SIXTH:
+                        positionAction = POSITIONS.BOTTOM_LEFT_SIXTH;
+                        break;
+                    case POSITIONS.BOTTOM_RIGHT_SIXTH:
+                        positionAction = POSITIONS.BOTTOM_RIGHT_SIXTH;
+                        break;
+                }
+            }
+            
+            log(`Action for ${areaName}: ${positionAction} (isPortrait: ${isPortrait})`);
             this._showPreview(positionAction);
             this._currentSnapArea = areaName;
             this._currentSnapAction = positionAction;
@@ -1113,133 +1394,289 @@ class Extension {
         // Calculate preview rectangle based on position
         let monitor = this._dragMonitor;
         let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor);
+        
+        // Check if monitor is in portrait orientation
+        let isPortrait = this._isPortraitOrientation(monitor);
+        
         let previewRect = new Meta.Rectangle();
 
         switch (position) {
             // Halves
             case POSITIONS.LEFT_HALF:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left half" becomes "top half"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_HALF:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 2);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right half" becomes "bottom half"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.TOP_HALF:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = workArea.width;
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top half" becomes "left half"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = workArea.height;
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_HALF:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = workArea.width;
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom half" becomes "right half"
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = workArea.height;
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Quarters
             case POSITIONS.TOP_LEFT:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top left" becomes "top left" but rotated
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_RIGHT:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 2);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top right" becomes "top right" but rotated
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_LEFT:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom left" becomes "bottom left" but rotated
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_RIGHT:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 2);
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = Math.floor(workArea.width / 2);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom right" becomes "bottom right" but rotated
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Thirds
             case POSITIONS.LEFT_THIRD:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left third" becomes "top third"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.CENTER_THIRD:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 3);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "center third" becomes "middle third" vertically
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_THIRD:
-                previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right third" becomes "bottom third"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = workArea.height;
+                }
                 break;
                 
             // Two-thirds
             case POSITIONS.LEFT_TWO_THIRDS:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width * 2 / 3);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "left two thirds" becomes "top two thirds"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height * 2 / 3);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width * 2 / 3);
+                    previewRect.height = workArea.height;
+                }
                 break;
             case POSITIONS.RIGHT_TWO_THIRDS:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 3);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width * 2 / 3);
-                previewRect.height = workArea.height;
+                if (isPortrait) {
+                    // In portrait mode, "right two thirds" becomes "bottom two thirds"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    previewRect.width = workArea.width;
+                    previewRect.height = Math.floor(workArea.height * 2 / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width * 2 / 3);
+                    previewRect.height = workArea.height;
+                }
                 break;
                 
             // Sixths (top row)
             case POSITIONS.TOP_LEFT_SIXTH:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top left sixth" becomes "top left sixth" rotated
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_CENTER_SIXTH:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 3);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top center sixth" becomes "middle left sixth"
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.TOP_RIGHT_SIXTH:
-                previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                previewRect.y = workArea.y;
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "top right sixth" stays in top right
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    previewRect.y = workArea.y;
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Sixths (bottom row)
             case POSITIONS.BOTTOM_LEFT_SIXTH:
-                previewRect.x = workArea.x;
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom left sixth" stays in bottom left
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x;
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_CENTER_SIXTH:
-                previewRect.x = workArea.x + Math.floor(workArea.width / 3);
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom center sixth" becomes "middle right sixth"
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 3);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 3);
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
             case POSITIONS.BOTTOM_RIGHT_SIXTH:
-                previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
-                previewRect.y = workArea.y + Math.floor(workArea.height / 2);
-                previewRect.width = Math.floor(workArea.width / 3);
-                previewRect.height = Math.floor(workArea.height / 2);
+                if (isPortrait) {
+                    // In portrait mode, "bottom right sixth" becomes "bottom right sixth" rotated
+                    previewRect.x = workArea.x + Math.floor(workArea.width / 2);
+                    previewRect.y = workArea.y + Math.floor(workArea.height * 2 / 3);
+                    previewRect.width = Math.floor(workArea.width / 2);
+                    previewRect.height = Math.floor(workArea.height / 3);
+                } else {
+                    previewRect.x = workArea.x + Math.floor(workArea.width * 2 / 3);
+                    previewRect.y = workArea.y + Math.floor(workArea.height / 2);
+                    previewRect.width = Math.floor(workArea.width / 3);
+                    previewRect.height = Math.floor(workArea.height / 2);
+                }
                 break;
                 
             // Special positions
@@ -1271,6 +1708,11 @@ class Extension {
             this._previewRect.destroy();
             this._previewRect = null;
         }
+    }
+
+    _isPortraitOrientation(monitor) {
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor);
+        return workArea.height > workArea.width;
     }
 }
 
